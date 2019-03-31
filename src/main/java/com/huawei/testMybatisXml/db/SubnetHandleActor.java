@@ -27,6 +27,7 @@ public class SubnetHandleActor extends UntypedAbstractActor {
     @Override
     public void onReceive(Object o) throws Throwable {
         ResponseDto responseDto = ResponseDto.buildFail(ResponseDto.ERROR_MESSAGE_TYPE, "无法识别的消息类型");
+        logger.info("###############################address = {}", this);
         if (o instanceof OperationParam) {
             OperationParam operationParam = (OperationParam) o;
             List<Subnet> subnets = Collections.EMPTY_LIST;

@@ -16,6 +16,7 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.FiniteDuration;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -26,18 +27,22 @@ public class ResourceQueryServiceImpl implements ResourceQueryService {
 
     @Override
     public ResponseDto listResource(ResourceParam resourceParam) {
-
+//        logger.info("############ResourceQueryService address = {}", this);
+        logger.info("#####################thread start {}-{}", Thread.currentThread().getId(), Thread.currentThread().getName() );
         String actorName = resourceParam.getResouceType().getActorHandle();
 
         ActorRef actorRef = actorSystem.actorOf(SpringExtension.SPRING_EXTENSION_PROVIDER.get(actorSystem)
-                .props(actorName), actorName);
+                .props(actorName), actorName + UUID.randomUUID());
 //        actorRef.tell(resourceParam.getOperationParam(), );
 //        PatternsCS.ask()
+        long start = System.currentTimeMillis();
+
         FiniteDuration duration = FiniteDuration.create(120, TimeUnit.SECONDS);
         Timeout timeout = Timeout.durationToTimeout(duration);
         Future<Object> result = Patterns.ask(actorRef, resourceParam.getOperationParam(), timeout);
         try {
             Object result1 = Await.result(result, duration);
+            logger.info("######################## actor take time : {}", (System.currentTimeMillis() - start));
             return (ResponseDto) result1;
         } catch (Exception e) {
             logger.error("wait result excption: {}", JSON.toJSONString(resourceParam), e);

@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestMybatisXmlApplication.class)
@@ -83,8 +85,22 @@ public class TestMybatisXmlApplicationTests {
 		operationParam.setParams(param);
 		resourceParam.setOperationParam(operationParam);
 
-		ResponseDto responseDto = resourceQueryService.listResource(resourceParam);
-		System.out.println(JSON.toJSONString(responseDto));
+//		ResponseDto responseDto = resourceQueryService.listResource(resourceParam);
+
+//		System.out.println(JSON.toJSONString(responseDto));
+		List<Thread> threadList = new ArrayList<>();
+		for (int i = 0; i < 5; i++) {
+			Thread thread = new Thread(() -> {
+				ResponseDto responseDto = resourceQueryService.listResource(resourceParam);
+				System.out.println(Thread.currentThread().getId() + "-" + Thread.currentThread().getName() + ", result = " + JSON.toJSONString(responseDto));
+			});
+			threadList.add(thread);
+		}
+		ExecutorService executors = Executors.newFixedThreadPool(100);
+		for (Thread thread : threadList) {
+			executors.execute(thread);
+		}
+		Thread.sleep(1000 * 10);
 
 	}
 
