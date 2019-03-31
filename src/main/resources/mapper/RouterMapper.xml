@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huawei.testMybatisXml.mapper.RouterMapper" >
+    <resultMap id="BaseResultMap" type="com.huawei.testMybatisXml.domain.Router" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="sgport_id" property="sgportId" jdbcType="VARCHAR" />
+        <result column="exter_nework_id" property="exterNeworkId" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, name, sgport_id, exter_nework_id
+    </sql>
+
+    <select id="selectCondition" parameterType="java.util.Map" resultMap="BaseResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM router
+        WHERE 1 = 1
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="name != null">
+            and name = #{name}
+        </if>
+        <if test="sgportId != null">
+            and sgport_id = #{sgportId}
+        </if>
+    </select>
+</mapper>
